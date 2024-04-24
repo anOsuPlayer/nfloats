@@ -1,2 +1,2 @@
 # nfloats
-Arbitrary precision floating points stored in IEEE-754 format.
+"nfloat"s are arbitrary precision, IEEE-754 floating points. 
