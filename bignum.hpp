@@ -160,7 +160,7 @@
                     }
                 }
 
-                if (greater.digits[greater.nlen-1] == 0) {
+                while (greater.digits[greater.nlen-1] == 0 && greater.nlen != 1) {
                     greater.resize(-1);
                 }
 
@@ -197,7 +197,7 @@
                 }
                 else {
                     if (!n2.sign) {
-                        return n2 - n1;
+                        return -(n2 - n1);
                     }
                     else {
                         if (n1 > n2) {
@@ -291,7 +291,7 @@
 
                 big_num result = 1;
 
-                for (big_num n = 1; n < n2; n++) {
+                for (big_num n = 0; n < n2; n++) {
                     result *= n1;
                 }
 
@@ -312,11 +312,25 @@
             }
 
             friend big_num operator % (const big_num& n1, const big_num n2) {
-                return (!n2 > !n1) ? n1 : !n1 - ((!n1 / !n2) * !n2);
+                if (!n2 > !n2) {
+                    return n1;
+                }
+
+                big_num result = 0, accumulator;
+
+                for (accumulator = 0; (accumulator + !n2) <= n1; accumulator += !n2) {
+                    result++;
+                }
+
+                return !(n1 - accumulator);
             }
 
             bool operator == (const big_num& n) const {
-                if (this->nlen != n.nlen || (this->sign != n.sign)) { return false; }
+                if (this->nlen != n.nlen || (this->sign != n.sign &&
+                    !(this->nlen == 1 && n.nlen == 1 && n.digits[0] == 0 && this->digits[0] == 0))) {
+                    
+                    return false;
+                }
                 for (size_t i = 0; i < this->nlen; i++) {
                     if (this->digits[i] != n[i]) {
                         return false;
@@ -346,9 +360,10 @@
                         }
                         else if (this->nlen == n.nlen) {
                             for (int e = this->nlen-1; e >= 0; e--) {
-                                if (this->digits[this->nlen-1-e] > n.digits[n.nlen-1-e]) {
-                                    return true;
+                                if (this->digits[e] == n.digits[e]) {
+                                    continue;
                                 }
+                                return this->digits[e] > n.digits[e];
                             }
                         }
                         return false;
@@ -360,17 +375,19 @@
                         return false;
                     }
                     if (this->nlen > n.nlen) {
-                            return false;
-                        }
-                        else if (this->nlen == n.nlen) {
+                        return false;
+                    }
+                    else if (this->nlen == n.nlen) {
+                        for (int e = 0; e < this->nlen; e++) {
                             for (int e = this->nlen-1; e >= 0; e--) {
-                                if (this->digits[this->nlen-1-e] > n.digits[n.nlen-1-e]) {
-                                    return false;
+                                if (this->digits[e] == n.digits[e]) {
+                                    continue;
                                 }
+                                return this->digits[e] < n.digits[e];
                             }
-                            return false;
                         }
-                        return true;
+                    }
+                    return true;
                 }
             }
 
@@ -384,9 +401,10 @@
                 }
                 else if (this->nlen == n.nlen) {
                     for (int e = this->nlen-1; e >= 0; e--) {
-                        if (this->digits[this->nlen-1-e] > n.digits[n.nlen-1-e]) {
-                            return true;
+                        if (this->digits[e] == n.digits[e]) {
+                            continue;
                         }
+                        return this->digits[e] > n.digits[e];
                     }
                 }
                 return false;
@@ -421,6 +439,9 @@
                 set.set(i);
             }
             copy /= 2;
+            if (copy == 0) {
+                break;
+            }
         }
 
         return set;

@@ -5,8 +5,7 @@
 
 int main() {
 
-    big_num n1 = 20;
-    big_num n2 = 10;
+    nfloat<32> f = nfloat<32>("0.3421");
 
-    std::cout << std::boolalpha << (n1 <= n2);
+    std::cout << f << " " << f.to_string(50);
 }

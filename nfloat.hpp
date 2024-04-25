@@ -57,6 +57,13 @@
             nfloat(const std::string& str) {
                 this->_body = new bitset<size>();
 
+                if (str == "0" || str == "+0") {
+                    return;
+                }
+                if (str == "-0") {
+                    this->set_sign(true);
+                    return;
+                }
                 if (str == "infinity") {
                     this->set_exponent(bitset<exp_size>().flip());
                     return;
@@ -86,18 +93,36 @@
                 big_num integral(integral_str);
                 big_num decimal(decimal_str);
 
-                long long exp = closest_2pow(integral)-1 + _bias(size);
+                long pow = closest_2pow(integral)-1;
+                long long exp;
+                
+                if (pow < 0) {
+                    pow = 0;
+                    if (decimal != 0) {
+                        exp = _bias(size);
+                        big_num threshold = (big_num(10) ^ decimal_str.length());
+                        while (decimal <= threshold && exp > 0) {
+                            decimal *= 2;
+                            exp--;
+                        }
+                        decimal -= threshold;
+                    }
+                }
+                else {
+                    exp = pow + _bias(size);
 
-                bitset<size> int_set = to_bitset<size>(integral);
-                int_set <<= mant_size;
+                    *(this->_body) |= to_bitset<size>(integral);
+                    *(this->_body) <<= (mant_size - pow);
+                    this->_body->reset(mant_size);
+                }   
 
                 if (decimal != 0) {
                     big_num threshold = (big_num(10) ^ decimal_str.length());
-                    for (int i = 0; i < mant_size; i++) {
+                    for (int i = 0; i < mant_size - pow; i++) {
                         decimal *= 2;
                         if (decimal >= threshold) {
                             decimal -= threshold;
-                            int_set.set(mant_size-1-i);
+                            this->_body->set(mant_size-pow-1-i);
                             if (decimal == 0) {
                                 break;
                             }
@@ -106,7 +131,12 @@
                     }
                 }
 
-                std::cout << int_set;
+                for (int i = 0; i < exp_size; i++) {
+                    if (exp % 2 == 1) {
+                        this->_body->set(mant_size+i);
+                    }
+                    exp /= 2;
+                }
             }
 
             template <fsize_t new_size> nfloat(const nfloat<new_size>& nf) {
@@ -128,6 +158,45 @@
             friend std::ostream& operator << (std::ostream& os, const nfloat<size>& f) {
                 os << f.sign() << " " << f.exponent() << " " << f.mantissa();
                 return os;
+            }
+
+            std::string to_string(unsigned int accuracy) {
+                big_num exp = from_bitset<exp_size>(this->exponent());
+                exp -= _bias(size);
+
+                big_num integral = 0, decimal = 10;
+                
+                for (int i = -1; i < mant_size; i++) {
+                    if (exp < 0) {
+                        decimal *= 10;
+                    }
+                    if (i == -1 || this->body()[mant_size-1-i] == 1) {
+                        if (exp >= 0) {
+                            integral += (big_num(2) ^ (exp));
+                        }
+                        else {
+                            decimal += (big_num(5) ^ (!exp));
+                        }
+                    }
+                    exp--;
+                }
+
+                std::string out = "";
+
+                out += this->sign() ? '-' : '+';
+
+                for (int i = integral.get_nlen()-1; i >= 0; i--) {
+                    out += (integral[i] + 48);
+                }
+
+                if (accuracy > 0) {
+                    out += '.';
+                    for (int i = 0; i < accuracy && i < decimal.get_nlen()-1; i++) {
+                        out += (decimal[decimal.get_nlen()-2-i] + 48);
+                    }
+                }
+
+                return out;
             }
 
             static nfloat<size> inf() {
