@@ -16,11 +16,11 @@
             bool sign;
 
             void resize(int d) {
-                int prev = this->nlen;
+                size_t prev = this->nlen;
                 this->nlen += d;
                 this->digits = ((this->digits == nullptr) ? (digit_t*) malloc(sizeof(digit_t)*(this->nlen))
                     : (digit_t*) realloc(this->digits, sizeof(digit_t)*(this->nlen)));
-                if (prev < this->nlen) {
+                if (prev < this->nlen && prev != 0) {
                     for (int i = 0; i < this->nlen-prev; i++) {
                         this->digits[this->nlen-1-i] = 0;
                     }
@@ -36,18 +36,18 @@
 
             big_num(__int128_t n) {
                 if (n == 0) {
-                    big_num();
+                    this->sign = false;
+                    this->resize(1);
+                    this->digits[0] = 0;
                     return;
                 }
 
                 this->sign = (n < 0);
                 n = (this->sign) ? -n : n;
-                for (; n >= 0; n /= 10) {
-                    this->digits = ((this->digits == nullptr) ? (digit_t*) malloc(sizeof(digit_t)*(this->nlen))
-                    : (digit_t*) realloc(this->digits, sizeof(digit_t)*(this->nlen)));
-                    digits[nlen] = n % 10;
-                    if (n == 0) { break; }
-                    this->nlen++;
+                while (n != 0) {
+                    this->resize(1);
+                    digits[nlen-1] = n % 10;
+                    n /= 10;
                 }
             }
             
@@ -112,7 +112,7 @@
                 return this->digits[index];
             }
 
-            const big_num& operator = (const big_num& n) {
+            big_num& operator = (const big_num& n) {
                 if (this->digits != nullptr) {
                     free(this->digits);
                 }
@@ -125,7 +125,7 @@
                     this->digits[i] = n.digits[i];
                 }
 
-                return n;
+                return *this;
             }
 
             friend big_num operator + (const big_num& n1, const big_num& n2) {
@@ -230,10 +230,10 @@
                 bool sign = n1.sign ^ n2.sign;
                 
                 if (n1 == 1) {
-                    return n2;
+                    return big_num(n2);
                 }
                 if (n2 == 1) {
-                    return n1;
+                    return big_num(n1);
                 }
 
                 const big_num& less = !n1 < !n2 ? !n1 : !n2;
@@ -335,7 +335,7 @@
             }
 
             bool operator <= (const big_num& n) const {
-                return big_num::operator == (n) || !big_num::operator > (n);
+                return big_num::operator == (n) || big_num::operator < (n);
             }
             
             bool operator > (const big_num& n) const {

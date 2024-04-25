@@ -1,9 +1,12 @@
 #include <iostream>
 #include <quadmath.h>
 
-#include "fltN.hpp"
+#include "nfloat.hpp"
 
 int main() {
-    
-    nfloat<32> f("15");
+
+    big_num n1 = 20;
+    big_num n2 = 10;
+
+    std::cout << std::boolalpha << (n1 <= n2);
 }
