@@ -132,6 +132,13 @@
                 big_num greater = big_num((n2.nlen > n1.nlen) ? n2 : (n2.nlen == n1.nlen && n2.absGreater(n1)) ? n2 : n1);
                 big_num small = big_num((n2.nlen > n1.nlen) ? n1 : (n2.nlen == n1.nlen && n2.absGreater(n1)) ? n1 : n2);
 
+                bool change = false;
+                if (greater.sign && !small.sign) {
+                    change = true;
+                    greater.sign = !greater.sign;
+                    small.sign = !small.sign;
+                }
+
                 for (int i = 0; i < small.nlen; i++) {
                     greater.digits[i] += small.digits[i] * (small.sign ? -1 : 1);
                     if (greater.digits[i] > 9) {
@@ -162,6 +169,11 @@
 
                 while (greater.digits[greater.nlen-1] == 0 && greater.nlen != 1) {
                     greater.resize(-1);
+                }
+
+                if (change) {
+                    greater.sign = !greater.sign;
+                    small.sign = !small.sign;
                 }
 
                 return greater;

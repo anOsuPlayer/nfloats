@@ -137,6 +137,21 @@
                     }
                     exp /= 2;
                 }
+
+                std::cout << this->mantissa() << "\n";
+
+                this->_body->flip(0);
+                if (this->body()[0] == 0) {
+                    this->_body->flip(1);
+                    for (int e = 0; e < size-1 && this->body()[e+1] == 0; e++) {
+                        this->_body->flip(e);
+                        this->_body->flip(e+1);
+                    }
+                }
+
+                std::cout << this->mantissa() << "\n";
+
+                this->_body->set(0);
             }
 
             template <fsize_t new_size> nfloat(const nfloat<new_size>& nf) {
@@ -164,8 +179,14 @@
                 big_num exp = from_bitset<exp_size>(this->exponent());
                 exp -= _bias(size);
 
-                big_num integral = 0, decimal = 10;
+                big_num integral = 0, decimal = 1;
                 
+                if (exp < 0) {
+                    for (big_num n = exp; n < -1; n++) {
+                        decimal *= 10;
+                    }
+                }
+
                 for (int i = -1; i < mant_size; i++) {
                     if (exp < 0) {
                         decimal *= 10;

@@ -5,7 +5,7 @@
 
 int main() {
 
-    nfloat<32> f = nfloat<32>("0.3421");
+    nfloat<32> f = nfloat<32>("0.3");
 
-    std::cout << f << " " << f.to_string(50);
+    std::cout << f.to_string(500);
 }
