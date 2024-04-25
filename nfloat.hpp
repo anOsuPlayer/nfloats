@@ -138,8 +138,6 @@
                     exp /= 2;
                 }
 
-                std::cout << this->mantissa() << "\n";
-
                 this->_body->flip(0);
                 if (this->body()[0] == 0) {
                     this->_body->flip(1);
@@ -148,8 +146,6 @@
                         this->_body->flip(e+1);
                     }
                 }
-
-                std::cout << this->mantissa() << "\n";
 
                 this->_body->set(0);
             }
