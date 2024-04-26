@@ -4,6 +4,7 @@ C++ Arbitrary precision, IEEE-754 floating point numbers, declared as follows:
 `nfloat<N> f = nfloat<N>("12.34");`
 
 where `N` is the _number of bits_ on which the floating point number will be coded onto (Note that `N` is such that: `16 <= N <= 2048` and `N % 8 == 0`, for any `nfloat`).
+> As of now, lengths higher than `1024` may lead to some problem. 
 
 ### Layout
 
@@ -27,3 +28,18 @@ Note that for any `nfloat` derived from an already existing floating point numbe
 
 `nfloat<80> fstr = nfloat<80>("1.0001");`
 
+### Manipulation
+
+The only way `nfloat`s can be manipulated is by directly tweaking their sign, exponent or mantissa. As of now, there is now way to perform arithmetic operation between them. However, one operation that can be performed is a _cast_ to another `nfloat` having a _different length_. This can be done with the `cast<>` function:
+
+`nfloat<128> F = nfloat<64>("0.3").cast<128>();`
+
+Keep in mind that, much like regular floating point casts, the precision of the casted number remains faithful to the size of the `nfloat` _before_ being casted. In this case, a 128-bit `nfloat` will be created, but it will hold the value `0.3` with the precision of a 64-bit floating point.
+
+### Notes
+
+The aim of `nfloat`s is _not_ efficiency nor any _actual application_, as some of the algorithms that were created to compute them are very inefficient (yet functiunal). My boredom may have lead to their creation, yet won't lead any further I'm afraid.
+
+However, even if they were somehow efficient, there would be no need to store high precision decimal numbers under the rules of the IEEE-754 format, as many other techniques concerning arbitrary precision numbers do the job much better.
+
+Regardless of that, they can show how the IEEE-754 format can be applied to floating point numbers different from the classic 32-bit floats and the 64-bit doubles found everywhere in programming.
