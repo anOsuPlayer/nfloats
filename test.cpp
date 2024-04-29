@@ -5,7 +5,8 @@
 
 int main() {
 
-    nfloat<1024> f = nfloat<1024>("-0.3312");
+    nfloat<2048> f = nfloat<2048>("+0.3312");
+    f.set_sign(true);
 
-    std::cout << f << "\n" << f.to_string(1000);
+    std::cout << f.to_string(20000);
 }

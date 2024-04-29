@@ -176,7 +176,8 @@
                 exp -= _bias(size);
 
                 big_num integral = 0, decimal = 1;
-                
+                big_num int_factor = 2 ^ !(exp), dec_factor = 5;
+
                 if (exp < 0) {
                     for (big_num n = exp; n < -1; n++) {
                         decimal *= 10;
@@ -186,13 +187,18 @@
                 for (int i = -1; i < mant_size; i++) {
                     if (exp < 0) {
                         decimal *= 10;
+                        dec_factor *= 5;
+                    }
+                    else {
+                        int_factor /= 2;
                     }
                     if (i == -1 || this->body()[mant_size-1-i] == 1) {
                         if (exp >= 0) {
-                            integral += (big_num(2) ^ (exp));
+                            integral += int_factor;
                         }
                         else {
-                            decimal += (big_num(5) ^ (!exp));
+                            decimal += dec_factor;
+                            
                         }
                     }
                     exp--;
