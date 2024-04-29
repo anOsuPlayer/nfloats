@@ -5,8 +5,8 @@
 
 int main() {
 
-    nfloat<2048> f = nfloat<2048>("+0.3312");
-    f.set_sign(true);
+    nfloat<128> f = nfloat<128>("-0.3312");
 
-    std::cout << f.to_string(20000);
+
+    std::cout << f;
 }

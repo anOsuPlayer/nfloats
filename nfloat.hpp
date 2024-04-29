@@ -229,12 +229,12 @@
                 return nfloat("-infinity");
             }
 
-            const bitset<size>& body() const {
+            bitset<size>& body() const {
                 return *this->_body;
             }
 
             bool sign() const {
-                return this->_body[size-1] == 1;
+                return this->_body->test(size-1);
             }
             void set_sign(bool sign) {
                 if (sign) {
