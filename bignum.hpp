@@ -249,15 +249,20 @@
                 }
 
                 const big_num& less = !n1 < !n2 ? !n1 : !n2;
-                big_num greater = big_num(!n1 < !n2 ? !n2 : !n1);
-                const big_num factor = greater;
+                const big_num& greater = !n1 < !n2 ? !n2 : !n1;
+                big_num result = 0;
 
-                for (big_num n = 1; n < less; n++) {
-                    greater += factor;
+                for (int i = 0; i < less.nlen; i++) {
+                    big_num factor = 0;
+                    for (int e = 0; e < less.digits[i]; e++) {
+                        factor += greater;
+                    }
+                    factor <<= i;
+                    result += factor;
                 }
 
-                greater.sign = sign;
-                return greater;
+                result.sign = sign;
+                return result;
             }
             
             void operator *= (const big_num& n) {
@@ -335,6 +340,42 @@
                 }
 
                 return !(n1 - accumulator);
+            }
+
+            friend big_num operator << (const big_num& n1, unsigned int diff) {
+                if (diff == 0) {
+                    return n1;
+                }
+
+                big_num n = n1;
+                n.resize(diff);
+
+                for (int i = n.nlen-1; i >= diff; i--) {
+                    n.digits[i] = n.digits[i-diff];
+                }
+                for (int i = 0; i < diff; i++) {
+                    n.digits[i] = 0;
+                }
+
+                return n;
+            }
+
+            void operator <<= (unsigned int diff) {
+                *this = *this << diff;
+            }
+
+            friend big_num operator >> (const big_num& n1, unsigned int diff) {
+                big_num n = n1;
+                for (int i = diff; i < n.nlen; i++) {
+                    n.digits[i-diff] = n.digits[i];
+                }
+                
+                n.resize(-((signed int) diff));
+                return n;
+            }
+
+            void operator >>= (unsigned int diff) {
+                *this = *this >> diff;
             }
 
             bool operator == (const big_num& n) const {

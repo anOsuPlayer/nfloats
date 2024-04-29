@@ -5,7 +5,7 @@
 
 int main() {
 
-    nfloat<80> f = nfloat<80>("0.3312");
+    nfloat<1024> f = nfloat<1024>("-0.3312");
 
-    std::cout << sizeof(nfloat<80>);
+    std::cout << f << "\n" << f.to_string(1000);
 }
