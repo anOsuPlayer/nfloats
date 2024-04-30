@@ -141,30 +141,27 @@
 
                 for (int i = 0; i < small.nlen; i++) {
                     greater.digits[i] += small.digits[i] * (small.sign ? -1 : 1);
-                    if (greater.digits[i] > 9) {
-                        for (int e = i; e < greater.nlen-1 && greater.digits[e] > 9; e++) {
-                            greater.digits[e] -= 10;
-                            greater.digits[e+1]++;
-                        }
-                        if (greater.digits[greater.nlen-1] > 9) {
-                            greater.resize(1);
-                            greater.digits[greater.nlen-2] -= 10;
-                            greater.digits[greater.nlen-1]++;
-                        }
+                }
+
+                for (int e = 0; e < greater.nlen-1; e++) {
+                    if (greater.digits[e] > 9) {
+                        greater.digits[e] -= 10;
+                        greater.digits[e+1]++;
                     }
-                    if (greater.digits[i] < 0) {
-                        for (int e = i; e < greater.nlen-1 && greater.digits[e] < 0; e++) {
-                            greater.digits[e] += 10;
-                            greater.digits[e+1]--;
-                        }
-                        if (greater.digits[greater.nlen-1] == 0) {
-                            greater.resize(-1);
-                        }
-                        if (greater.digits[greater.nlen-1] < 0) {
-                            greater.digits[greater.nlen-1] *= -1;
-                            greater.sign = !greater.sign;
-                        }
+                    if (greater.digits[e] < 0) {
+                        greater.digits[e] += 10;
+                        greater.digits[e+1]--;
                     }
+                }
+
+                if (greater.digits[greater.nlen-1] > 9) {
+                    greater.resize(1);
+                    greater.digits[greater.nlen-2] -= 10;
+                    greater.digits[greater.nlen-1]++;
+                }
+                if (greater.digits[greater.nlen-1] < 0) {
+                    greater.digits[greater.nlen-1] *= -1;
+                    greater.sign = !greater.sign;
                 }
 
                 while (greater.digits[greater.nlen-1] == 0 && greater.nlen != 1) {
@@ -331,6 +328,10 @@
             friend big_num operator % (const big_num& n1, const big_num n2) {
                 if (!n2 > !n2) {
                     return n1;
+                }
+
+                if (n2 == 2) {
+                    return n1.digits[0] % 2 == 0;
                 }
 
                 big_num result = 0, accumulator;

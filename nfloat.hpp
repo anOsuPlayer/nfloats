@@ -94,7 +94,7 @@
                 big_num decimal(decimal_str);
 
                 long pow = closest_2pow(integral)-1;
-                long long exp;
+                __int128_t exp;
                 
                 if (pow < 0) {
                     pow = 0;
@@ -138,16 +138,9 @@
                     exp /= 2;
                 }
 
-                this->_body->flip(0);
-                if (this->body()[0] == 0) {
-                    this->_body->flip(1);
-                    for (int e = 0; e < size-1 && this->body()[e+1] == 0; e++) {
-                        this->_body->flip(e);
-                        this->_body->flip(e+1);
-                    }
-                }
-
-                this->_body->set(0);
+                big_num mant = from_bitset<mant_size>(this->mantissa());
+                mant++;
+                this->set_mantissa(to_bitset<mant_size>(mant));
             }
 
             template <fsize_t new_size> nfloat(const nfloat<new_size>& nf) {
