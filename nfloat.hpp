@@ -94,8 +94,8 @@
                 big_num decimal(decimal_str);
 
                 long pow = closest_2pow(integral)-1;
-                __int128_t exp;
-                
+                long long exp;
+
                 if (pow < 0) {
                     pow = 0;
                     if (decimal != 0) {
@@ -114,7 +114,7 @@
                     *(this->_body) |= to_bitset<size>(integral);
                     *(this->_body) <<= (mant_size - pow);
                     this->_body->reset(mant_size);
-                }   
+                }
 
                 if (decimal != 0) {
                     big_num threshold = (big_num(10) ^ decimal_str.length());

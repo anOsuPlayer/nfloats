@@ -280,9 +280,9 @@
                 if (!n2 > !n1) { return 0; }
                 if (!n2 == !n1) { return 1; }
 
-                big_num result = 0, accumulator;
+                big_num result = 0, accumulator, factor = !n2;
 
-                for (accumulator = 0; (accumulator + !n2) <= n1; accumulator += !n2) {
+                for (accumulator = 0; (accumulator + factor) <= n1; accumulator += factor) {
                     result++;
                 }
 
@@ -331,7 +331,7 @@
                 }
 
                 if (n2 == 2) {
-                    return n1.digits[0] % 2 == 0;
+                    return n1.digits[0] % 2 == 0 ? 0 : 1;
                 }
 
                 big_num result = 0, accumulator;

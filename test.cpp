@@ -5,7 +5,7 @@
 
 int main() {
 
-    nfloat<32> f = nfloat<32>("0.999999999999999999999");
+    big_num n = 125123412313123;
 
-    std::cout << f << "\n" << f.to_string(50000);
+    std::cout << to_bitset<500>(n);
 }
