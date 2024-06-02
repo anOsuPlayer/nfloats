@@ -5,7 +5,8 @@
 
 int main() {
 
-    big_num n = 125123412313123;
+    nfloat<32> f(1.51f);
 
-    std::cout << to_bitset<500>(n);
+    std::cout << f << "\n";
+    std::cout << f.to_string(500);
 }

@@ -3,6 +3,7 @@
 
     #include <iostream>
     #include <string>
+    #include <vector>
     #include <bitset>
 
     typedef signed char digit_t;
@@ -173,6 +174,10 @@
                     small.sign = !small.sign;
                 }
 
+                if (greater.nlen == 1 && greater[0] == 0) {
+                    greater.sign = false;
+                }
+
                 return greater;
             }
 
@@ -266,28 +271,34 @@
                 *this = *this * n;
             }
 
-            friend big_num operator / (const big_num& n1, const big_num& n2) {
-                if (n1 == 0) {
-                    return 0;
-                } 
-                if (n2 == 0) {
-                    std::cout << "Illegal division by 0\n";
-                    return 0;
+            friend big_num operator / (big_num& n1, const big_num& n2) {
+                if(n2 == 0) {
+                    std::cout << "impossible ivision By 0";
                 }
-
-                bool sign = n1.sign ^ n2.sign;
-
-                if (!n2 > !n1) { return 0; }
-                if (!n2 == !n1) { return 1; }
-
-                big_num result = 0, accumulator, factor = !n2;
-
-                for (accumulator = 0; (accumulator + factor) <= n1; accumulator += factor) {
-                    result++;
+                if(n1 < n2){
+                    return big_num(0);
                 }
-
-                result.sign = sign;
-                return result;
+                if(n1 == n2){
+                    return big_num(1);
+                }
+                int i, lgcat = 0, cc;
+                int n = n1.nlen, m = n2.nlen;
+                std::vector<int> cat(n, 0);
+                big_num t;
+                for (i = n - 1; t * 10 + n1.digits[i] < n2; i--){
+                    t *= 10;
+                    t += n1.digits[i] ;
+                }
+                for (; i >= 0; i--){
+                    t = t * 10 + n1.digits[i];
+                    for (cc = 9; cc * n2 > t;cc--);
+                    t -= cc * n2;
+                    cat[lgcat++] = cc;
+                }
+                for (i = 0; i < lgcat;i++)
+                    n1.digits[i] = cat[lgcat - i - 1];
+                n1.resize(lgcat-cat.size());
+                return n1;
             }
             
             void operator /= (const big_num& n) {
@@ -490,12 +501,10 @@
         big_num copy(num);
         for (int i = 0; i < size; i++) {
             if ((copy % 2) == 1) {
+                copy--;
                 set.set(i);
             }
             copy /= 2;
-            if (copy == 0) {
-                break;
-            }
         }
 
         return set;
