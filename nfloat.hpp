@@ -166,6 +166,9 @@
 
             std::string to_string(unsigned int accuracy) {
                 big_num exp = from_bitset<exp_size>(this->exponent());
+                if (exp == 0) {
+                    return "0";
+                }
                 exp -= _bias(size);
 
                 big_num integral = 0, decimal = 1;
@@ -191,7 +194,7 @@
                             
                         }
                     }
-                    else {
+                    if (exp >= 0) {
                         int_factor /= 2;
                     }
                     exp--;
