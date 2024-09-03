@@ -4,7 +4,6 @@ C++ Arbitrary precision, IEEE-754 floating point numbers, declared as follows:
 `nfloat<N> f = nfloat<N>("12.34");`
 
 where `N` is the _number of bits_ on which the floating point number will be coded onto (Note that `N` is such that: `16 <= N <= 2048` and `N % 8 == 0`, for any `nfloat`).
-> As of now, lengths higher than `1024` may lead to some problem. 
 
 ### Layout
 
@@ -30,7 +29,7 @@ Note that for any `nfloat` derived from an already existing floating point numbe
 
 ### Manipulation
 
-The only way `nfloat`s can be manipulated is by directly tweaking their sign, exponent or mantissa. As of now, there is now way to perform arithmetic operation between them. However, one operation that can be performed is a _cast_ to another `nfloat` having a _different length_. This can be done with the `cast<>` function:
+The only way `nfloat`s can be manipulated is by directly tweaking their sign, exponent or mantissa. As of now, there is no way to perform arithmetic operation between them. However, one operation that can be performed is a _cast_ to another `nfloat` having a _different length_. This can be done with the `cast<>` function:
 
 `nfloat<128> F = nfloat<64>("0.3").cast<128>();`
 
